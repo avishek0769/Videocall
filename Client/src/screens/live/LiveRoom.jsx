@@ -20,6 +20,7 @@ function LiveRoom() {
     const [removeStream, setRemoveStream] = useState(false)
     const [videoTracks, setVideoTracks] = useState([])
     const [audioTracks, setAudioTracks] = useState([])
+    const [remoteAudioEnabled, setRemoteAudioEnabled] = useState(false)
     const socket = useContext(SocketContext)
     const navigate = useNavigate()
     const producerTransRef = useRef(false)
@@ -265,7 +266,7 @@ function LiveRoom() {
         },
             async ({ params }) => {
                 if (params.error) {
-                    console.error(error)
+                    console.error(params.error)
                     return
                 }
                 let consumer = await consumerTransport.consume(params)
@@ -281,6 +282,7 @@ function LiveRoom() {
                 ]
 
                 const { track } = consumer;
+                console.log("Track", track)
 
                 if(track.kind == "video") setVideoTracks(prev => [...prev, track]);
                 else setAudioTracks(prev => [...prev, track]);
@@ -456,6 +458,8 @@ function LiveRoom() {
                                     url={myStream}
                                     muted
                                     playing
+                                    playsinline
+                                    config={{ file: { attributes: { playsInline: true } } }}
                                     width="100%"
                                     height="100%"
                                     style={{ objectFit: 'cover' }}
@@ -484,6 +488,10 @@ function LiveRoom() {
                                     <ReactPlayer
                                         url={stream}
                                         playing
+                                        muted={!remoteAudioEnabled}
+                                        playsinline
+                                        config={{ file: { attributes: { playsInline: true } } }}
+                                        onError={(e) => console.error("Remote player error", e)}
                                         width="100%"
                                         height="100%"
                                         style={{ objectFit: 'cover' }}
@@ -543,6 +551,16 @@ function LiveRoom() {
 
                     {/* Control Buttons */}
                     <div className="flex items-center justify-center gap-2 md:gap-3">
+                        {remoteStream && remoteStream.length > 0 && (
+                            <button
+                                onClick={() => setRemoteAudioEnabled(prev => !prev)}
+                                className="flex items-center gap-1 px-4 py-2 md:px-6 bg-white/10 border border-white/20 text-gray-200 font-semibold rounded-lg md:rounded-xl transition-all duration-300 hover:bg-white/20 text-sm md:text-base"
+                            >
+                                <span className="text-sm md:text-lg">🔊</span>
+                                <span className="hidden md:inline">{remoteAudioEnabled ? "Mute Remote" : "Enable Audio"}</span>
+                            </button>
+                        )}
+
                         {/* End Call Button */}
                         {remoteSocketId && (
                             <button

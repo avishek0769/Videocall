@@ -23,7 +23,7 @@ const server = http.createServer(app)
 const __dirname = path.resolve();
 
 app.use(cors({
-    origin: CLIENT_ADDRESS
+    origin: "*"
 }))
 app.use(express.static("./dist"))
 
@@ -67,6 +67,9 @@ const mediaCodecs = [
     },
 ]
 
+const MEDIASOUP_LISTEN_IP = process.env.MEDIASOUP_LISTEN_IP || "0.0.0.0"
+const MEDIASOUP_ANNOUNCED_IP = process.env.MEDIASOUP_ANNOUNCED_IP || undefined
+
 const createWorker = async () => {
     worker = await mediasoup.createWorker({
         rtcMinPort: 2000,
@@ -83,12 +86,19 @@ const createWorker = async () => {
 
 createWorker()
 
+if (!MEDIASOUP_ANNOUNCED_IP) {
+    console.warn("[mediasoup] MEDIASOUP_ANNOUNCED_IP is not set. Remote clients may connect to signaling but fail to receive media.")
+}
+
 const createWebRTCTransport = async (router) => {
     return new Promise(async (resolve, reject) => {
         try {
             let transport = await router.createWebRtcTransport({
                 listenIps: [
-                    { ip: '127.0.0.1' }
+                    {
+                        ip: MEDIASOUP_LISTEN_IP,
+                        announcedIp: MEDIASOUP_ANNOUNCED_IP,
+                    }
                 ],
                 enableUdp: true,
                 enableTcp: true,
@@ -344,7 +354,7 @@ io.on("connection", async (socket) => {
         }
         catch (error) {
             console.log(error.message)
-            callback({
+            cb({
                 params: {
                     error: error
                 }
@@ -367,6 +377,7 @@ io.on("connection", async (socket) => {
 
     socket.on("consumer-resume", async ({ consumerId }) => {
         const consumer = consumers.find(consumerData => consumerData.consumer.id === consumerId).consumer
+        console.log("Consu", consumer)
         await consumer.resume()
     })
 

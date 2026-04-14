@@ -8,7 +8,7 @@ export default defineConfig({
     server: {
         proxy: {
             '/api': {
-                target: 'https://xbsmsrft-3000.inc1.devtunnels.ms', // Replace with your API URL
+                target: 'https://r51klsgs-3000.inc1.devtunnels.ms', // Replace with your API URL
                 changeOrigin: true,
                 secure: false,
             },
