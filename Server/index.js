@@ -8,6 +8,18 @@ import cors from "cors"
 import mediasoup from "mediasoup"
 import fs from "fs"
 import path from "path"
+import os from "os"
+
+// Auto-detect LAN IP at startup so a DHCP change never silently breaks WebRTC media
+const getLanIp = () => {
+    const interfaces = os.networkInterfaces()
+    for (const iface of Object.values(interfaces)) {
+        for (const addr of iface) {
+            if (addr.family === 'IPv4' && !addr.internal) return addr.address
+        }
+    }
+    return '127.0.0.1'
+}
 
 // const options = {
 //     key: fs.readFileSync('../ssl/key.pem', 'utf-8'),
@@ -65,7 +77,7 @@ const mediaCodecs = [
 ]
 
 const MEDIASOUP_LISTEN_IP = process.env.MEDIASOUP_LISTEN_IP || "0.0.0.0"
-const MEDIASOUP_ANNOUNCED_IP = process.env.MEDIASOUP_ANNOUNCED_IP || undefined
+const MEDIASOUP_ANNOUNCED_IP = process.env.MEDIASOUP_ANNOUNCED_IP || getLanIp()
 
 const createWorker = async () => {
     worker = await mediasoup.createWorker({
@@ -83,6 +95,7 @@ const createWorker = async () => {
 
 createWorker()
 
+console.log(`[mediasoup] Announced IP: ${MEDIASOUP_ANNOUNCED_IP}`)
 if (!MEDIASOUP_ANNOUNCED_IP) {
     console.warn("[mediasoup] MEDIASOUP_ANNOUNCED_IP is not set. Remote clients may connect to signaling but fail to receive media.")
 }
