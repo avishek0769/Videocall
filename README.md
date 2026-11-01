@@ -1,4 +1,4 @@
-# Video Record Call (mediasoup)
+# Video Calling Platform (mediasoup)
 
 A real-time video communication app with two modes:
 
