@@ -406,23 +406,23 @@ function LiveRoom() {
     const totalParticipants = 1 + (remoteStream?.length || 0)
 
     return (
-        <div className="h-[100dvh] max-h-[100dvh] bg-slate-950 text-slate-100 font-sans flex flex-col justify-between overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
+        <div className="h-[100dvh] max-h-[100dvh] bg-zinc-950 text-zinc-100 font-sans flex flex-col justify-between overflow-hidden selection:bg-zinc-800 selection:text-zinc-100">
             {/* User Left Popup Notification */}
             {showUserLeftPopup && (
                 <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] animate-bounce px-3 w-full max-w-sm">
-                    <div className="bg-slate-900/95 border border-rose-500/30 rounded-2xl px-4 py-3 backdrop-blur-xl shadow-2xl shadow-rose-950/40 flex items-center justify-between gap-3">
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 shadow-xl flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400">
+                            <div className="p-2 rounded-lg bg-zinc-800 text-zinc-300">
                                 <UserIcon className="w-4 h-4" />
                             </div>
                             <div>
                                 <h3 className="text-xs sm:text-sm font-semibold text-white">Participant Left</h3>
-                                <p className="text-slate-400 text-[11px] sm:text-xs">The remote participant disconnected.</p>
+                                <p className="text-zinc-400 text-[11px] sm:text-xs">The remote participant disconnected.</p>
                             </div>
                         </div>
                         <button
                             onClick={() => setShowUserLeftPopup(false)}
-                            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                            className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
                         >
                             <CloseIcon className="w-4 h-4" />
                         </button>
@@ -431,17 +431,17 @@ function LiveRoom() {
             )}
 
             {/* Top Bar */}
-            <header className="px-3 sm:px-6 py-2.5 sm:py-3.5 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl flex-shrink-0 z-40">
+            <header className="px-3 sm:px-6 py-2.5 sm:py-3.5 border-b border-zinc-800 bg-zinc-950 flex-shrink-0 z-40">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     {/* Brand & Room Info */}
                     <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-md shadow-cyan-500/20">
-                            <VideoIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-200">
+                            <VideoIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </div>
                         <div className="flex items-center gap-1.5 sm:gap-2">
-                            <h1 className="text-xs sm:text-sm font-bold text-white tracking-tight">PulseCall</h1>
-                            <span className="text-slate-600">/</span>
-                            <span className="font-mono text-[11px] sm:text-xs text-slate-300 bg-slate-900 px-1.5 py-0.5 rounded-md border border-slate-800 max-w-[120px] sm:max-w-none truncate">
+                            <h1 className="text-xs sm:text-sm font-semibold text-white tracking-tight">Videocall</h1>
+                            <span className="text-zinc-600">/</span>
+                            <span className="font-mono text-[11px] sm:text-xs text-zinc-300 bg-zinc-900 px-1.5 py-0.5 rounded-md border border-zinc-800 max-w-[120px] sm:max-w-none truncate">
                                 {roomId}
                             </span>
                         </div>
@@ -450,32 +450,32 @@ function LiveRoom() {
                     {/* Status Badges */}
                     <div className="flex items-center gap-1.5 sm:gap-3">
                         {/* Participants Pill */}
-                        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] sm:text-xs font-medium text-slate-300">
-                            <UsersIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-cyan-400" />
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] sm:text-xs font-medium text-zinc-300">
+                            <UsersIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-zinc-400" />
                             <span>{totalParticipants}</span>
                         </div>
 
                         {/* Connection Pill */}
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] sm:text-xs font-medium">
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] sm:text-xs font-medium">
                             {isConnected === true ? (
                                 <>
-                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></span>
                                     <span className="text-emerald-400 hidden xs:inline sm:inline">Connected</span>
                                 </>
                             ) : isConnected === false ? (
                                 <>
-                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-500"></span>
                                     <span className="text-amber-400 hidden xs:inline sm:inline">Connecting</span>
                                 </>
                             ) : isConnected === undefined ? (
                                 <>
-                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-400"></span>
-                                    <span className="text-rose-400 hidden xs:inline sm:inline">Failed</span>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500"></span>
+                                    <span className="text-red-400 hidden xs:inline sm:inline">Failed</span>
                                 </>
                             ) : (
                                 <>
-                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-slate-500"></span>
-                                    <span className="text-slate-400 hidden xs:inline sm:inline">Standby</span>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-zinc-500"></span>
+                                    <span className="text-zinc-400 hidden xs:inline sm:inline">Standby</span>
                                 </>
                             )}
                         </div>
@@ -488,7 +488,7 @@ function LiveRoom() {
                 <div className={`w-full h-full grid gap-2 sm:gap-4 min-h-0 ${getGridLayout(totalParticipants)}`}>
                     
                     {/* My Video Stream */}
-                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900/80 border border-slate-800/90 shadow-2xl shadow-cyan-950/10 flex items-center justify-center h-full min-h-0 w-full">
+                    <div className="relative rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 flex items-center justify-center h-full min-h-0 w-full">
                         {myStream ? (
                             <div className="w-full h-full relative [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full [&_video]:!-scale-x-100 flex items-center justify-center">
                                 <ReactPlayer
@@ -503,23 +503,23 @@ function LiveRoom() {
                                 />
                             </div>
                         ) : (
-                            <div className="flex flex-col items-center justify-center text-slate-500 p-4 text-center">
-                                <VideoIcon className="w-8 h-8 sm:w-10 sm:h-10 mb-2 sm:mb-3 animate-pulse text-slate-600" />
-                                <p className="text-xs sm:text-sm font-medium text-slate-400">Connecting camera & mic...</p>
+                            <div className="flex flex-col items-center justify-center text-zinc-500 p-4 text-center">
+                                <VideoIcon className="w-8 h-8 sm:w-10 sm:h-10 mb-2 sm:mb-3 text-zinc-600" />
+                                <p className="text-xs sm:text-sm font-medium text-zinc-400">Connecting camera & mic...</p>
                             </div>
                         )}
 
                         {/* Stream Badge */}
-                        <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md">
-                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></div>
-                            <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide">You</span>
+                        <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-black/60 border border-zinc-800">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></div>
+                            <span className="text-[11px] sm:text-xs font-medium text-zinc-200">You</span>
                         </div>
                     </div>
 
                     {/* Remote Streams */}
                     {remoteStream && remoteStream.length > 0 ? (
                         remoteStream.map((stream, index) => (
-                            <div key={index} className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900/80 border border-slate-800/90 shadow-2xl shadow-cyan-950/10 flex items-center justify-center h-full min-h-0 w-full">
+                            <div key={index} className="relative rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 flex items-center justify-center h-full min-h-0 w-full">
                                 <div className="w-full h-full relative [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full flex items-center justify-center">
                                     <ReactPlayer
                                         url={stream}
@@ -535,9 +535,9 @@ function LiveRoom() {
                                 </div>
 
                                 {/* Stream Badge */}
-                                <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md">
-                                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-cyan-400 animate-pulse"></div>
-                                    <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide">
+                                <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-black/60 border border-zinc-800">
+                                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></div>
+                                    <span className="text-[11px] sm:text-xs font-medium text-zinc-200">
                                         Participant {index + 1}
                                     </span>
                                 </div>
@@ -545,16 +545,16 @@ function LiveRoom() {
                         ))
                     ) : (
                         /* Empty Remote Placeholder */
-                        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900/40 border border-dashed border-slate-800 flex items-center justify-center h-full min-h-0 p-4 sm:p-6 text-center">
+                        <div className="relative rounded-2xl overflow-hidden bg-zinc-900/40 border border-dashed border-zinc-800 flex items-center justify-center h-full min-h-0 p-4 sm:p-6 text-center">
                             <div className="max-w-xs space-y-2 sm:space-y-3">
-                                <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center mx-auto text-slate-400">
-                                    <UserIcon className="w-5 h-5 sm:w-7 sm:h-7" />
+                                <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center mx-auto text-zinc-400">
+                                    <UserIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                                 </div>
-                                <h4 className="text-xs sm:text-sm font-semibold text-slate-300">
+                                <h4 className="text-xs sm:text-sm font-semibold text-zinc-300">
                                     {remoteSocketId ? "Participant joined, preparing feed..." : "Waiting for another participant..."}
                                 </h4>
-                                <p className="text-[11px] sm:text-xs text-slate-500">
-                                    Share room ID <span className="font-mono text-cyan-400 font-semibold">{roomId}</span> with anyone to start video chatting.
+                                <p className="text-[11px] sm:text-xs text-zinc-500">
+                                    Share room ID <span className="font-mono text-zinc-300 font-semibold">{roomId}</span> with anyone to start video chatting.
                                 </p>
                             </div>
                         </div>
@@ -568,22 +568,22 @@ function LiveRoom() {
                 
                 {/* Floating Status Notification */}
                 {isConnected === null && remoteSocketId && (
-                    <div className="mb-2 sm:mb-3 pointer-events-auto px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-cyan-950/80 border border-cyan-800/60 backdrop-blur-md text-[11px] sm:text-xs font-medium text-cyan-300 shadow-lg text-center max-w-[90vw] truncate">
+                    <div className="mb-2 sm:mb-3 pointer-events-auto px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] sm:text-xs font-medium text-zinc-300 shadow-md text-center max-w-[90vw] truncate">
                         Participant detected. Establishing stream channels...
                     </div>
                 )}
 
                 {/* Main Action Dock */}
-                <div className="pointer-events-auto bg-slate-900/90 border border-slate-800/90 backdrop-blur-2xl px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shadow-2xl shadow-black/80 flex items-center gap-2 sm:gap-3">
+                <div className="pointer-events-auto bg-zinc-900 border border-zinc-800 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shadow-xl flex items-center gap-2 sm:gap-3">
                     
                     {/* Audio Toggle Button */}
                     {remoteStream && remoteStream.length > 0 && (
                         <button
                             onClick={() => setRemoteAudioEnabled(prev => !prev)}
-                            className={`p-2.5 sm:p-3 rounded-full transition-all duration-200 cursor-pointer ${
+                            className={`p-2.5 sm:p-3 rounded-full transition-colors cursor-pointer ${
                                 remoteAudioEnabled 
-                                    ? "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white" 
-                                    : "bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30"
+                                    ? "bg-zinc-800 text-zinc-200 hover:bg-zinc-700 hover:text-white" 
+                                    : "bg-red-950 border border-red-800 text-red-400 hover:bg-red-900"
                             }`}
                             title={remoteAudioEnabled ? "Mute Remote Audio" : "Unmute Remote Audio"}
                         >
@@ -595,7 +595,7 @@ function LiveRoom() {
                     {remoteSocketId ? (
                         <button
                             onClick={handleCallEnd}
-                            className="flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-semibold rounded-full shadow-lg shadow-rose-600/30 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                            className="flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-semibold rounded-full transition-colors cursor-pointer"
                         >
                             <PhoneOffIcon className="w-4 h-4" />
                             <span>Leave Call</span>
@@ -603,7 +603,7 @@ function LiveRoom() {
                     ) : (
                         <button
                             onClick={handleCallEnd}
-                            className="flex items-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 cursor-pointer"
+                            className="flex items-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs sm:text-sm font-medium rounded-full transition-colors cursor-pointer"
                         >
                             <ArrowLeftIcon className="w-4 h-4" />
                             <span>Exit Lobby</span>

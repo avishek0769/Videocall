@@ -211,23 +211,23 @@ function RecordRoom() {
     }, [socket, handleUserJoined, handleUserJoinedConfirm, handleReceivingStream, handleUserLeft])
 
     return (
-        <div className="h-[100dvh] max-h-[100dvh] bg-slate-950 text-slate-100 font-sans flex flex-col justify-between overflow-hidden selection:bg-blue-500/30 selection:text-blue-200">
+        <div className="h-[100dvh] max-h-[100dvh] bg-zinc-950 text-zinc-100 font-sans flex flex-col justify-between overflow-hidden selection:bg-zinc-800 selection:text-zinc-100">
             {/* User Left Popup Notification */}
             {showUserLeftPopup && (
                 <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] animate-bounce px-3 w-full max-w-sm">
-                    <div className="bg-slate-900/95 border border-rose-500/30 rounded-2xl px-4 py-3 backdrop-blur-xl shadow-2xl shadow-rose-950/40 flex items-center justify-between gap-3">
+                    <div className="bg-zinc-900 border border-zinc-800 rounded-xl px-4 py-3 shadow-xl flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400">
+                            <div className="p-2 rounded-lg bg-zinc-800 text-zinc-300">
                                 <UserIcon className="w-4 h-4" />
                             </div>
                             <div>
                                 <h3 className="text-xs sm:text-sm font-semibold text-white">Participant Left</h3>
-                                <p className="text-slate-400 text-[11px] sm:text-xs">The other participant left the walkie session.</p>
+                                <p className="text-zinc-400 text-[11px] sm:text-xs">The other participant left the walkie session.</p>
                             </div>
                         </div>
                         <button
                             onClick={() => setShowUserLeftPopup(false)}
-                            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                            className="p-1 rounded-md text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors"
                         >
                             <CloseIcon className="w-4 h-4" />
                         </button>
@@ -236,17 +236,17 @@ function RecordRoom() {
             )}
 
             {/* Top Bar */}
-            <header className="px-3 sm:px-6 py-2.5 sm:py-3.5 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl flex-shrink-0 z-40">
+            <header className="px-3 sm:px-6 py-2.5 sm:py-3.5 border-b border-zinc-800 bg-zinc-950 flex-shrink-0 z-40">
                 <div className="max-w-7xl mx-auto flex items-center justify-between">
                     {/* Brand & Room Info */}
                     <div className="flex items-center gap-2.5">
-                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20">
-                            <FilmIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-zinc-900 border border-zinc-800 flex items-center justify-center text-zinc-200">
+                            <FilmIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                         </div>
                         <div className="flex items-center gap-1.5 sm:gap-2">
-                            <h1 className="text-xs sm:text-sm font-bold text-white tracking-tight">PulseCall Walkie</h1>
-                            <span className="text-slate-600">/</span>
-                            <span className="font-mono text-[11px] sm:text-xs text-slate-300 bg-slate-900 px-1.5 py-0.5 rounded-md border border-slate-800 max-w-[120px] sm:max-w-none truncate">
+                            <h1 className="text-xs sm:text-sm font-semibold text-white tracking-tight">Walkie</h1>
+                            <span className="text-zinc-600">/</span>
+                            <span className="font-mono text-[11px] sm:text-xs text-zinc-300 bg-zinc-900 px-1.5 py-0.5 rounded-md border border-zinc-800 max-w-[120px] sm:max-w-none truncate">
                                 {roomId}
                             </span>
                         </div>
@@ -254,26 +254,26 @@ function RecordRoom() {
 
                     {/* Connection Status Badge */}
                     <div className="flex items-center gap-1.5 sm:gap-2">
-                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] sm:text-xs font-medium">
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] sm:text-xs font-medium">
                             {state === "recording" ? (
                                 <>
-                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-500 animate-pulse"></span>
-                                    <span className="text-rose-400">Recording</span>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                    <span className="text-red-400">Recording</span>
                                 </>
                             ) : state === "sent" ? (
                                 <>
-                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></span>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></span>
                                     <span className="text-emerald-400">Sent</span>
                                 </>
                             ) : remoteSocketId ? (
                                 <>
-                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></span>
                                     <span className="text-emerald-400">Connected</span>
                                 </>
                             ) : (
                                 <>
-                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-slate-500"></span>
-                                    <span className="text-slate-400">Standby</span>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-zinc-500"></span>
+                                    <span className="text-zinc-400">Standby</span>
                                 </>
                             )}
                         </div>
@@ -286,7 +286,7 @@ function RecordRoom() {
                 <div className="w-full h-full grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1 gap-2 sm:gap-4 min-h-0">
                     
                     {/* My Local Video Feed */}
-                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900/80 border border-slate-800/90 shadow-2xl shadow-blue-950/10 flex items-center justify-center h-full min-h-0 w-full">
+                    <div className="relative rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 flex items-center justify-center h-full min-h-0 w-full">
                         <video 
                             ref={videoRef} 
                             muted 
@@ -296,23 +296,23 @@ function RecordRoom() {
                         />
                         
                         {/* Video Label Badge */}
-                        <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md">
-                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></div>
-                            <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide">You</span>
+                        <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-black/60 border border-zinc-800">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></div>
+                            <span className="text-[11px] sm:text-xs font-medium text-zinc-200">You</span>
                         </div>
 
                         {/* Live Recording Overlay Badge */}
                         {state === "recording" && (
-                            <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-rose-950/80 border border-rose-500/40 backdrop-blur-md">
-                                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
-                                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-rose-300">REC</span>
+                            <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-red-950 border border-red-800">
+                                <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
+                                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-red-300">REC</span>
                                 <span className="font-mono text-[11px] sm:text-xs font-bold text-white">{formatTime(recordingDuration)}</span>
                             </div>
                         )}
                     </div>
 
                     {/* Remote Video Feed (Asynchronous Received Video) */}
-                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900/80 border border-slate-800/90 shadow-2xl shadow-blue-950/10 flex items-center justify-center h-full min-h-0 w-full">
+                    <div className="relative rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800 flex items-center justify-center h-full min-h-0 w-full">
                         <video 
                             ref={nextUserRef}
                             autoPlay 
@@ -321,16 +321,16 @@ function RecordRoom() {
                         />
                         
                         {!remoteSocketId && (
-                            <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 text-center bg-slate-900/50 border border-dashed border-slate-800 rounded-2xl">
+                            <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 text-center bg-zinc-900/40 border border-dashed border-zinc-800 rounded-2xl">
                                 <div className="max-w-xs space-y-2 sm:space-y-3">
-                                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center mx-auto text-slate-400">
-                                        <UserIcon className="w-5 h-5 sm:w-7 sm:h-7" />
+                                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl bg-zinc-800 border border-zinc-700 flex items-center justify-center mx-auto text-zinc-400">
+                                        <UserIcon className="w-5 h-5 sm:w-6 sm:h-6" />
                                     </div>
-                                    <h4 className="text-xs sm:text-sm font-semibold text-slate-300">
+                                    <h4 className="text-xs sm:text-sm font-semibold text-zinc-300">
                                         Waiting for participant...
                                     </h4>
-                                    <p className="text-[11px] sm:text-xs text-slate-500">
-                                        Share room ID <span className="font-mono text-blue-400 font-semibold">{roomId}</span> to begin walkie messages.
+                                    <p className="text-[11px] sm:text-xs text-zinc-500">
+                                        Share room ID <span className="font-mono text-zinc-300 font-semibold">{roomId}</span> to begin walkie messages.
                                     </p>
                                 </div>
                             </div>
@@ -338,9 +338,9 @@ function RecordRoom() {
 
                         {/* Remote Video Label */}
                         {remoteSocketId && (
-                            <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md">
-                                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-400 animate-pulse"></div>
-                                <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide">Participant</span>
+                            <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg bg-black/60 border border-zinc-800">
+                                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-500"></div>
+                                <span className="text-[11px] sm:text-xs font-medium text-zinc-200">Participant</span>
                             </div>
                         )}
                     </div>
@@ -353,7 +353,7 @@ function RecordRoom() {
                 
                 {/* Floating Status Notification */}
                 <div className="mb-2 sm:mb-3 pointer-events-auto">
-                    <p className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-slate-900/90 border border-slate-800 backdrop-blur-md text-[11px] sm:text-xs font-medium text-slate-300 shadow-lg text-center max-w-[90vw] truncate">
+                    <p className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-zinc-900 border border-zinc-800 text-[11px] sm:text-xs font-medium text-zinc-300 shadow-md text-center max-w-[90vw] truncate">
                         {!remoteSocketId ? "Waiting for participant to join room..." : null}
                         {(remoteSocketId && state === undefined) ? "Recording ready to transmit." : null}
                         {(remoteSocketId && state === "recording") ? "Recording dispatch in progress..." : null}
@@ -363,20 +363,20 @@ function RecordRoom() {
                 </div>
 
                 {/* Main Action Dock */}
-                <div className="pointer-events-auto bg-slate-900/90 border border-slate-800/90 backdrop-blur-2xl px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shadow-2xl shadow-black/80 flex items-center gap-2 sm:gap-3">
+                <div className="pointer-events-auto bg-zinc-900 border border-zinc-800 px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shadow-xl flex items-center gap-2 sm:gap-3">
                     
                     {/* Record / Transmit Button */}
                     {remoteSocketId && state !== "recording" && (
                         <button
                             onClick={handleCall}
                             disabled={cooldownTime > 0}
-                            className={`flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-full shadow-lg transition-all duration-200 cursor-pointer ${
+                            className={`flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-full transition-colors cursor-pointer ${
                                 cooldownTime > 0 
-                                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed shadow-none' 
-                                    : 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 active:scale-95'
+                                    ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' 
+                                    : 'bg-white text-zinc-950 hover:bg-zinc-200'
                             }`}
                         >
-                            <RecordDotIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-rose-400" />
+                            <RecordDotIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-red-600" />
                             <span>
                                 {cooldownTime > 0 ? `Cooldown (${formatTime(cooldownTime)})` : 'Hold to Record'}
                             </span>
@@ -387,7 +387,7 @@ function RecordRoom() {
                     {state === "recording" && (
                         <button
                             onClick={handleStopRecording}
-                            className="flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-semibold rounded-full shadow-lg shadow-rose-600/30 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                            className="flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-semibold rounded-full transition-colors cursor-pointer"
                         >
                             <StopCircleIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                             <span>Send Dispatch</span>
@@ -398,7 +398,7 @@ function RecordRoom() {
                     {remoteSocketId ? (
                         <button
                             onClick={handleEndCall}
-                            className="flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-semibold rounded-full shadow-lg shadow-rose-600/30 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                            className="flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-red-600 hover:bg-red-500 text-white text-xs sm:text-sm font-semibold rounded-full transition-colors cursor-pointer"
                         >
                             <PhoneOffIcon className="w-4 h-4" />
                             <span>Leave Room</span>
@@ -406,7 +406,7 @@ function RecordRoom() {
                     ) : (
                         <button
                             onClick={handleEndCall}
-                            className="flex items-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 cursor-pointer"
+                            className="flex items-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs sm:text-sm font-medium rounded-full transition-colors cursor-pointer"
                         >
                             <ArrowLeftIcon className="w-4 h-4" />
                             <span>Exit Lobby</span>
