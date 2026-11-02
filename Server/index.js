@@ -310,6 +310,7 @@ io.on("connection", async (socket) => {
                     iceServers  // sent to client so it can reach server via TURN if direct UDP is blocked
                 }
             })
+            
             addTransport(transport, roomId, socket.id, consumer)
         })
 
