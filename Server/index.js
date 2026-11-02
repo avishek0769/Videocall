@@ -35,17 +35,6 @@ const __dirname = path.resolve();
 app.use(cors({
     origin: "*"
 }))
-app.use(express.static("./dist"))
-
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist/index.html'));
-})
-app.get("/live", (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist/index.html'));
-})
-app.get("/record", (req, res) => {
-    res.sendFile(path.join(__dirname, 'dist/index.html'));
-})
 
 const io = new Server(server, {
     cors: {
@@ -310,7 +299,7 @@ io.on("connection", async (socket) => {
                     iceServers  // sent to client so it can reach server via TURN if direct UDP is blocked
                 }
             })
-            
+
             addTransport(transport, roomId, socket.id, consumer)
         })
 
