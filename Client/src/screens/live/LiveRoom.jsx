@@ -134,18 +134,28 @@ function LiveRoom() {
         console.log("Called createSendTransport")
 
         socket.emit("createWebRTCTransport", { consumer: false }, ({ params }) => {
-            // console.log(params)
+            // params also contains iceServers (Twilio TURN) for cross-network NAT traversal
+            console.log("[ICE] Send transport params — iceServers:", params.iceServers, "iceCandidates:", params.iceCandidates)
             const producerTransport = deviceRef.current.createSendTransport(params)
 
-            producerTransport.on("connect", async ({ dtlsParameters }, callback, errback) => {
+            // ICE/DTLS diagnostics — tells us exactly where the connection fails
+            producerTransport.on("connectionstatechange", (state) => {
+                console.log("[ICE] SendTransport connectionstatechange →", state)
+            })
+            producerTransport.on("icegatheringstatechange", (state) => {
+                console.log("[ICE] SendTransport icegatheringstatechange →", state)
+            })
+
+            producerTransport.on("connect", ({ dtlsParameters }, callback, errback) => {
                 console.log("DTLS Params on Producer Connect --> ", dtlsParameters)
-                try {
-                    await socket.emit("producerTransport-connect", { dtlsParameters })
-                    callback()
-                }
-                catch (error) {
-                    errback(error)
-                }
+                socket.emit("producerTransport-connect", { dtlsParameters }, (res) => {
+                    if (res?.error) {
+                        console.error("producerTransport-connect error on server:", res.error)
+                        errback(new Error(res.error))
+                    } else {
+                        callback()
+                    }
+                })
             })
 
             producerTransport.on("produce", (parameters, callback, errback) => {
@@ -219,19 +229,31 @@ function LiveRoom() {
                 console.error(params.error)
                 return
             }
+            // params.iceServers contains Twilio TURN credentials for cross-network NAT traversal
+            console.log("[ICE] Recv transport params — iceServers:", params.iceServers, "iceCandidates:", params.iceCandidates)
             let consumerTransport = deviceRef.current.createRecvTransport(params)
 
+            // ICE/DTLS diagnostics
+            consumerTransport.on("connectionstatechange", (state) => {
+                console.log("[ICE] RecvTransport connectionstatechange →", state)
+            })
+            consumerTransport.on("icegatheringstatechange", (state) => {
+                console.log("[ICE] RecvTransport icegatheringstatechange →", state)
+            })
+
             consumerTransport.on("connect", ({ dtlsParameters }, callback, errback) => {
-                try {
-                    socket.emit("consumerTransport-connect", {
-                        dtlsParameters,
-                        serverConsumerTransportId: params.id
-                    })
-                    callback()
-                }
-                catch (error) {
-                    errback(error)
-                }
+                console.log("DTLS Params on Consumer Connect --> ", dtlsParameters)
+                socket.emit("consumerTransport-connect", {
+                    dtlsParameters,
+                    serverConsumerTransportId: params.id
+                }, (res) => {
+                    if (res?.error) {
+                        console.error("consumerTransport-connect error on server:", res.error)
+                        errback(new Error(res.error))
+                    } else {
+                        callback()
+                    }
+                })
             })
 
             // Immediately consume each producer — no deferred state needed
@@ -276,6 +298,9 @@ function LiveRoom() {
 
                 const { track } = consumer;
                 console.log("Track", track)
+                // If track stays muted after a few seconds, ICE failed (firewall / NAT issue)
+                track.onunmute = () => console.log(`[ICE] ✅ ${track.kind} track UNMUTED — media is flowing!`)
+                track.onmute   = () => console.log(`[ICE] ⚠️  ${track.kind} track re-MUTED — media interrupted`)
 
                 socket.emit("consumer-resume", { consumerId: consumer.id })
 

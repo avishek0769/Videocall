@@ -1,4 +1,5 @@
 import "dotenv/config"
+import twilio from "twilio"
 import { Server } from "socket.io"
 import { CLIENT_ADDRESS } from "../constants.js"
 import https from "https"
@@ -115,8 +116,13 @@ const createWebRTCTransport = async (router) => {
                 preferUdp: true
             })
 
+            transport.on("icestatechange", icestate => {
+                console.log(`[mediasoup] Transport ${transport.id} ICE state -> ${icestate}`)
+            })
+
             transport.on("dtlsstatechange", dtlsstate => {
-                if (dtlsstate == "closed") {
+                console.log(`[mediasoup] Transport ${transport.id} DTLS state -> ${dtlsstate}`)
+                if (dtlsstate == "closed" || dtlsstate == "failed") {
                     transport.close()
                 }
             })
@@ -132,6 +138,28 @@ const createWebRTCTransport = async (router) => {
             reject(error)
         }
     })
+}
+
+// Fetch Twilio TURN credentials (cached for 1 hour since tokens expire after ~24h)
+let cachedIceServers = null
+let iceServersCachedAt = 0
+const getTurnCredentials = async () => {
+    const now = Date.now()
+    if (cachedIceServers && now - iceServersCachedAt < 3600_000) return cachedIceServers
+    try {
+        const accountSid = process.env.TWILIO_ACCOUNT_SID
+        const authToken  = process.env.TWILIO_AUTH_TOKEN
+        if (!accountSid || !authToken) return []
+        const client = twilio(accountSid, authToken)
+        const token  = await client.tokens.create()
+        cachedIceServers  = token.iceServers  // includes STUN + TURN (udp/tcp/tls)
+        iceServersCachedAt = now
+        console.log("[TURN] Fetched Twilio ICE servers:", cachedIceServers.map(s => s.url || s.urls))
+        return cachedIceServers
+    } catch (err) {
+        console.warn("[TURN] Failed to fetch Twilio credentials:", err.message)
+        return []
+    }
 }
 
 const createRoom = async (roomId, socketId) => {
@@ -270,6 +298,7 @@ io.on("connection", async (socket) => {
     socket.on("createWebRTCTransport", async ({ consumer }, cb) => {
         const roomId = peers[socket.id].roomId;
         const router = rooms[roomId].router;
+        const iceServers = await getTurnCredentials()
 
         createWebRTCTransport(router).then(transport => {
             cb({
@@ -277,7 +306,8 @@ io.on("connection", async (socket) => {
                     id: transport.id,
                     iceParameters: transport.iceParameters,
                     iceCandidates: transport.iceCandidates,
-                    dtlsParameters: transport.dtlsParameters
+                    dtlsParameters: transport.dtlsParameters,
+                    iceServers  // sent to client so it can reach server via TURN if direct UDP is blocked
                 }
             })
             addTransport(transport, roomId, socket.id, consumer)
@@ -285,9 +315,14 @@ io.on("connection", async (socket) => {
 
     })
 
-    socket.on("producerTransport-connect", async ({ dtlsParameters }) => {
-        // console.log("DTLS Params --> ", dtlsParameters)
-        await getProducerTransport(socket.id).connect({ dtlsParameters })
+    socket.on("producerTransport-connect", async ({ dtlsParameters }, cb) => {
+        try {
+            await getProducerTransport(socket.id).connect({ dtlsParameters })
+            if (cb) cb({ connected: true })
+        } catch (error) {
+            console.error("producerTransport-connect error:", error)
+            if (cb) cb({ error: error.message })
+        }
     })
 
     socket.on("producerTransport-produce", async ({ kind, rtpParameters }, cb) => {
@@ -312,13 +347,20 @@ io.on("connection", async (socket) => {
         })
     })
 
-    socket.on("consumerTransport-connect", async ({ dtlsParameters, serverConsumerTransportId }) => {
-        // console.log("DTLS Params --> ", dtlsParameters)
-        const consumerTransport = transports.find(transportData =>
-            transportData.consumer && transportData.transport.id == serverConsumerTransportId
-        ).transport;
-
-        await consumerTransport.connect({ dtlsParameters })
+    socket.on("consumerTransport-connect", async ({ dtlsParameters, serverConsumerTransportId }, cb) => {
+        try {
+            const transportData = transports.find(transportData =>
+                transportData.consumer && transportData.transport.id == serverConsumerTransportId
+            );
+            if (!transportData) {
+                throw new Error(`Consumer transport ${serverConsumerTransportId} not found`)
+            }
+            await transportData.transport.connect({ dtlsParameters })
+            if (cb) cb({ connected: true })
+        } catch (error) {
+            console.error("consumerTransport-connect error:", error)
+            if (cb) cb({ error: error.message })
+        }
     })
 
     socket.on("consumerTransport-consume", async ({ rtpCapabilities, serverConsumerTransportId, remoteProducerId }, cb) => {
