@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useRef, useState, useCallback } from 'react'
 import { SocketContext } from '../../context/SocketProvider';
 import { useParams, useNavigate } from 'react-router-dom';
+import { FilmIcon, RecordDotIcon, StopCircleIcon, PhoneOffIcon, ArrowLeftIcon, UserIcon, CloseIcon, VideoIcon } from '../../components/Icons';
 
 function RecordRoom() {
     const mediaRecorderRef = useRef(null);
@@ -210,208 +211,207 @@ function RecordRoom() {
     }, [socket, handleUserJoined, handleUserJoinedConfirm, handleReceivingStream, handleUserLeft])
 
     return (
-        <div className="min-h-screen bg-gray-950 text-white font-sans">
-            {/* User Left Popup */}
+        <div className="h-[100dvh] max-h-[100dvh] bg-slate-950 text-slate-100 font-sans flex flex-col justify-between overflow-hidden selection:bg-blue-500/30 selection:text-blue-200">
+            {/* User Left Popup Notification */}
             {showUserLeftPopup && (
-                <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100]">
-                    <div className="bg-gradient-to-r from-gray-900 to-gray-800 border border-red-500/30 rounded-2xl p-6 md:p-8 mx-4 max-w-md w-full text-center shadow-2xl shadow-red-500/20">
-                        <div className="text-4xl md:text-5xl mb-4">👋</div>
-                        <h3 className="text-xl md:text-2xl font-bold text-red-400 mb-2">
-                            User Left
-                        </h3>
-                        <p className="text-gray-300 text-sm md:text-base mb-4">
-                            The other participant has left the recording session
-                        </p>
+                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] animate-bounce px-3 w-full max-w-sm">
+                    <div className="bg-slate-900/95 border border-rose-500/30 rounded-2xl px-4 py-3 backdrop-blur-xl shadow-2xl shadow-rose-950/40 flex items-center justify-between gap-3">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400">
+                                <UserIcon className="w-4 h-4" />
+                            </div>
+                            <div>
+                                <h3 className="text-xs sm:text-sm font-semibold text-white">Participant Left</h3>
+                                <p className="text-slate-400 text-[11px] sm:text-xs">The other participant left the walkie session.</p>
+                            </div>
+                        </div>
                         <button
                             onClick={() => setShowUserLeftPopup(false)}
-                            className="px-4 py-2 bg-gradient-to-r from-red-500 to-red-600 text-white font-medium rounded-lg hover:shadow-lg transition-all duration-200"
+                            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
                         >
-                            Dismiss
+                            <CloseIcon className="w-4 h-4" />
                         </button>
                     </div>
                 </div>
             )}
 
-            {/* Header */}
-            <header className="px-6 py-4 border-b border-gray-700 bg-black/30 backdrop-blur-lg sticky top-0 z-50">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="text-2xl drop-shadow-lg">🎥</div>
-                        <h1 className="text-xl font-bold bg-gradient-to-r from-red-400 to-teal-400 bg-clip-text text-transparent">
-                            Recording Session
-                        </h1>
+            {/* Top Bar */}
+            <header className="px-3 sm:px-6 py-2.5 sm:py-3.5 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl flex-shrink-0 z-40">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    {/* Brand & Room Info */}
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-blue-500 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20">
+                            <FilmIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                        </div>
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                            <h1 className="text-xs sm:text-sm font-bold text-white tracking-tight">PulseCall Walkie</h1>
+                            <span className="text-slate-600">/</span>
+                            <span className="font-mono text-[11px] sm:text-xs text-slate-300 bg-slate-900 px-1.5 py-0.5 rounded-md border border-slate-800 max-w-[120px] sm:max-w-none truncate">
+                                {roomId}
+                            </span>
+                        </div>
                     </div>
 
-                    {/* Connection Status */}
-                    <div className="flex items-center gap-2">
-                        {state === "recording" ? (
-                            <>
-                                <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                                <span className="text-red-400 text-sm font-medium">Recording</span>
-                            </>
-                        ) : state === "sent" ? (
-                            <>
-                                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                                <span className="text-green-400 text-sm font-medium">Sent</span>
-                            </>
-                        ) : remoteSocketId ? (
-                            <>
-                                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                <span className="text-green-400 text-sm font-medium">Connected</span>
-                            </>
-                        ) : (
-                            <>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                                <span className="text-gray-400 text-sm font-medium">Waiting</span>
-                            </>
-                        )}
+                    {/* Connection Status Badge */}
+                    <div className="flex items-center gap-1.5 sm:gap-2">
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] sm:text-xs font-medium">
+                            {state === "recording" ? (
+                                <>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-500 animate-pulse"></span>
+                                    <span className="text-rose-400">Recording</span>
+                                </>
+                            ) : state === "sent" ? (
+                                <>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></span>
+                                    <span className="text-emerald-400">Sent</span>
+                                </>
+                            ) : remoteSocketId ? (
+                                <>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span className="text-emerald-400">Connected</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-slate-500"></span>
+                                    <span className="text-slate-400">Standby</span>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             </header>
 
-            {/* Video Container */}
-            <div className="flex-1 p-4 md:p-6">
-                <div className="h-[calc(100vh-140px)] flex flex-col md:flex-row gap-4 md:gap-6">
-                    {/* My Video */}
-                    <div className="flex-1 bg-gray-900/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-lg">
-                        <div className="h-full w-full relative flex items-center justify-center">
-                            <video 
-                                ref={videoRef} 
-                                muted 
-                                autoPlay 
-                                playsInline
-                                className="w-full h-full object-contain"
-                                style={{
-                                    aspectRatio: 'auto',
-                                    objectFit: 'contain',
-                                    objectPosition: 'center'
-                                }}
-                            />
-                            
-                            {/* Video Label */}
-                            <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-lg">
-                                <span className="text-white text-sm font-medium">You</span>
-                            </div>
-
-                            {/* Recording Indicator with Timer */}
-                            {state === "recording" && (
-                                <div className="absolute top-4 left-4 flex items-center gap-2 bg-red-500/20 backdrop-blur-sm px-3 py-1 rounded-lg border border-red-500/30">
-                                    <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                                    <span className="text-red-400 text-sm font-medium">REC</span>
-                                    <span className="text-red-400 text-sm font-medium">{formatTime(recordingDuration)}</span>
-                                </div>
-                            )}
+            {/* Video Streams Container */}
+            <main className="flex-1 min-h-0 p-2 sm:p-4 pb-20 sm:pb-24 max-w-7xl mx-auto w-full flex items-center justify-center">
+                <div className="w-full h-full grid grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1 gap-2 sm:gap-4 min-h-0">
+                    
+                    {/* My Local Video Feed */}
+                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900/80 border border-slate-800/90 shadow-2xl shadow-blue-950/10 flex items-center justify-center h-full min-h-0 w-full">
+                        <video 
+                            ref={videoRef} 
+                            muted 
+                            autoPlay 
+                            playsInline
+                            className="w-full h-full object-cover -scale-x-100"
+                        />
+                        
+                        {/* Video Label Badge */}
+                        <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></div>
+                            <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide">You</span>
                         </div>
-                    </div>
 
-                    {/* Remote Video */}
-                    <div className="flex-1 bg-gray-900/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-lg">
-                        <div className="h-full relative flex items-center justify-center">
-                            <video 
-                                ref={nextUserRef}
-                                autoPlay 
-                                playsInline
-                                className="w-full h-full object-contain"
-                                style={{
-                                    aspectRatio: 'auto',
-                                    objectFit: 'contain',
-                                    objectPosition: 'center'
-                                }}
-                            />
-                            
-                            {!remoteSocketId && (
-                                <div className="absolute inset-0 flex items-center justify-center">
-                                    <div className="text-center">
-                                        <div className="text-6xl md:text-8xl mb-4 opacity-30">👤</div>
-                                        <p className="text-gray-400">Waiting for participant...</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Video Label */}
-                            {remoteSocketId && (
-                                <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-lg">
-                                    <span className="text-white text-sm font-medium">Participant</span>
-                                </div>
-                            )}
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Control Panel */}
-            <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 via-gray-950/95 to-transparent backdrop-blur-lg border-t border-gray-700">
-                <div className="flex justify-center items-center gap-4 px-4 py-2 md:px-6">
-                    {/* Status Message */}
-                    <div className="text-center mb-2">
-                        <p className="text-gray-300 text-sm">
-                            {!remoteSocketId ? "⏳ Waiting for participant to join..." : null}
-
-                            {(remoteSocketId && state === undefined) ? (
-                                "Record again and send"
-                            ) : (remoteSocketId && state === "recording") ? (
-                                "🔴 Recording in progress..."
-                            ) : (remoteSocketId && state === "sent") ? (
-                                `🎉 Recording sent! Cooldown: ${formatTime(cooldownTime)}`
-                            ) : (remoteSocketId && state === null) ?(
-                                "✅ Participant joined! Ready to send recordings..."
-                            ) : null}
-                        </p>
-                    </div>
-
-                    {/* Control Buttons */}
-                    <div className="flex items-center justify-center gap-2 md:gap-3">
-                        {/* Start Recording Button - with cooldown */}
-                        {remoteSocketId && state !== "recording" && (
-                            <button
-                                onClick={handleCall}
-                                disabled={cooldownTime > 0}
-                                className={`flex items-center gap-1 px-4 py-2 md:px-6 font-semibold rounded-lg md:rounded-xl shadow-lg transition-all duration-300 text-sm md:text-base ${
-                                    cooldownTime > 0 
-                                        ? 'bg-gray-600 text-gray-400 cursor-not-allowed shadow-gray-600/30' 
-                                        : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-blue-500/30 hover:shadow-blue-500/40 hover:scale-105'
-                                }`}
-                            >
-                                <span className="text-sm md:text-lg">🎥</span>
-                                <span className="hidden md:inline">
-                                    {cooldownTime > 0 ? `Wait ${formatTime(cooldownTime)}` : 'Start Recording'}
-                                </span>
-                            </button>
-                        )}
-
-                        {/* Stop Recording Button */}
+                        {/* Live Recording Overlay Badge */}
                         {state === "recording" && (
-                            <button
-                                onClick={handleStopRecording}
-                                className="flex items-center gap-1 px-4 py-2 md:px-6 bg-gradient-to-r from-gray-600 to-gray-700 text-white font-semibold rounded-lg md:rounded-xl shadow-lg shadow-gray-600/30 hover:shadow-gray-600/40 transition-all duration-300 hover:scale-105 text-sm md:text-base"
-                            >
-                                <span className="text-sm md:text-lg">⏹️</span>
-                                <span className="hidden md:inline">Stop Recording</span>
-                            </button>
-                        )}
-
-                        {/* End Session Button */}
-                        {remoteSocketId && (
-                            <button
-                                onClick={handleEndCall}
-                                className="flex items-center gap-1 px-4 py-2 md:px-6 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg md:rounded-xl shadow-lg shadow-red-500/30 hover:shadow-red-500/40 transition-all duration-300 hover:scale-105 text-sm md:text-base"
-                            >
-                                <span className="text-sm md:text-lg">📞</span>
-                                <span className="hidden md:inline">End Session</span>
-                            </button>
-                        )}
-
-                        {/* Back Button */}
-                        {!remoteSocketId && (
-                            <button
-                                onClick={handleEndCall}
-                                className="flex items-center gap-1 px-4 py-2 md:px-6 bg-white/10 border border-white/20 text-gray-300 font-semibold rounded-lg md:rounded-xl transition-all duration-300 hover:bg-white/20 text-sm md:text-base"
-                            >
-                                <span className="text-sm md:text-lg">←</span>
-                                <span className="hidden md:inline">Back to Home</span>
-                            </button>
+                            <div className="absolute top-2.5 left-2.5 sm:top-3 sm:left-3 flex items-center gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-rose-950/80 border border-rose-500/40 backdrop-blur-md">
+                                <span className="w-2 h-2 rounded-full bg-rose-500 animate-ping"></span>
+                                <span className="text-[11px] sm:text-xs font-bold uppercase tracking-wider text-rose-300">REC</span>
+                                <span className="font-mono text-[11px] sm:text-xs font-bold text-white">{formatTime(recordingDuration)}</span>
+                            </div>
                         )}
                     </div>
+
+                    {/* Remote Video Feed (Asynchronous Received Video) */}
+                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900/80 border border-slate-800/90 shadow-2xl shadow-blue-950/10 flex items-center justify-center h-full min-h-0 w-full">
+                        <video 
+                            ref={nextUserRef}
+                            autoPlay 
+                            playsInline
+                            className="w-full h-full object-cover"
+                        />
+                        
+                        {!remoteSocketId && (
+                            <div className="absolute inset-0 flex items-center justify-center p-4 sm:p-6 text-center bg-slate-900/50 border border-dashed border-slate-800 rounded-2xl">
+                                <div className="max-w-xs space-y-2 sm:space-y-3">
+                                    <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center mx-auto text-slate-400">
+                                        <UserIcon className="w-5 h-5 sm:w-7 sm:h-7" />
+                                    </div>
+                                    <h4 className="text-xs sm:text-sm font-semibold text-slate-300">
+                                        Waiting for participant...
+                                    </h4>
+                                    <p className="text-[11px] sm:text-xs text-slate-500">
+                                        Share room ID <span className="font-mono text-blue-400 font-semibold">{roomId}</span> to begin walkie messages.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
+                        {/* Remote Video Label */}
+                        {remoteSocketId && (
+                            <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md">
+                                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-blue-400 animate-pulse"></div>
+                                <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide">Participant</span>
+                            </div>
+                        )}
+                    </div>
+
+                </div>
+            </main>
+
+            {/* Floating Control Dock */}
+            <div className="fixed bottom-3 sm:bottom-6 left-0 right-0 z-50 flex flex-col items-center pointer-events-none px-3 sm:px-4">
+                
+                {/* Floating Status Notification */}
+                <div className="mb-2 sm:mb-3 pointer-events-auto">
+                    <p className="px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-slate-900/90 border border-slate-800 backdrop-blur-md text-[11px] sm:text-xs font-medium text-slate-300 shadow-lg text-center max-w-[90vw] truncate">
+                        {!remoteSocketId ? "Waiting for participant to join room..." : null}
+                        {(remoteSocketId && state === undefined) ? "Recording ready to transmit." : null}
+                        {(remoteSocketId && state === "recording") ? "Recording dispatch in progress..." : null}
+                        {(remoteSocketId && state === "sent") ? `Recording transmitted. Cooldown: ${formatTime(cooldownTime)}` : null}
+                        {(remoteSocketId && state === null) ? "Participant connected. Ready to record." : null}
+                    </p>
+                </div>
+
+                {/* Main Action Dock */}
+                <div className="pointer-events-auto bg-slate-900/90 border border-slate-800/90 backdrop-blur-2xl px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shadow-2xl shadow-black/80 flex items-center gap-2 sm:gap-3">
+                    
+                    {/* Record / Transmit Button */}
+                    {remoteSocketId && state !== "recording" && (
+                        <button
+                            onClick={handleCall}
+                            disabled={cooldownTime > 0}
+                            className={`flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 text-xs sm:text-sm font-semibold rounded-full shadow-lg transition-all duration-200 cursor-pointer ${
+                                cooldownTime > 0 
+                                    ? 'bg-slate-800 text-slate-500 cursor-not-allowed shadow-none' 
+                                    : 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-blue-500/30 hover:shadow-blue-500/50 hover:scale-105 active:scale-95'
+                            }`}
+                        >
+                            <RecordDotIcon className="w-2.5 h-2.5 sm:w-3 sm:h-3 text-rose-400" />
+                            <span>
+                                {cooldownTime > 0 ? `Cooldown (${formatTime(cooldownTime)})` : 'Hold to Record'}
+                            </span>
+                        </button>
+                    )}
+
+                    {/* Stop Recording Button */}
+                    {state === "recording" && (
+                        <button
+                            onClick={handleStopRecording}
+                            className="flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-semibold rounded-full shadow-lg shadow-rose-600/30 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                        >
+                            <StopCircleIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                            <span>Send Dispatch</span>
+                        </button>
+                    )}
+
+                    {/* End Session Button */}
+                    {remoteSocketId ? (
+                        <button
+                            onClick={handleEndCall}
+                            className="flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-semibold rounded-full shadow-lg shadow-rose-600/30 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                        >
+                            <PhoneOffIcon className="w-4 h-4" />
+                            <span>Leave Room</span>
+                        </button>
+                    ) : (
+                        <button
+                            onClick={handleEndCall}
+                            className="flex items-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 cursor-pointer"
+                        >
+                            <ArrowLeftIcon className="w-4 h-4" />
+                            <span>Exit Lobby</span>
+                        </button>
+                    )}
                 </div>
             </div>
         </div>

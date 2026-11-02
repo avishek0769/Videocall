@@ -3,6 +3,7 @@ import ReactPlayer from "react-player"
 import { useNavigate, useParams } from 'react-router-dom'
 import { SocketContext } from '../../context/SocketProvider'
 import * as mediasoupClient from "mediasoup-client"
+import { RadioIcon, PhoneOffIcon, VolumeIcon, VolumeXIcon, UserIcon, UsersIcon, ArrowLeftIcon, CloseIcon, VideoIcon, ActivityIcon, CheckIcon } from '../../components/Icons'
 
 function LiveRoom() {
     const [myStream, setMyStream] = useState()
@@ -395,87 +396,101 @@ function LiveRoom() {
 
     // Helper function to determine grid layout based on participant count
     const getGridLayout = (participantCount) => {
-        if (participantCount <= 1) return "grid-cols-1"
-        if (participantCount === 2) return "grid-cols-2 md:grid-cols-2"
-        if (participantCount <= 4) return "grid-cols-2 md:grid-cols-2"
-        if (participantCount <= 6) return "grid-cols-2 md:grid-cols-2 lg:grid-cols-3"
-        return "grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+        if (participantCount <= 1) return "grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1"
+        if (participantCount === 2) return "grid-cols-1 grid-rows-2 md:grid-cols-2 md:grid-rows-1"
+        if (participantCount <= 4) return "grid-cols-2 grid-rows-2"
+        return "grid-cols-2 md:grid-cols-3 xl:grid-cols-4"
     }
 
     // Calculate total participants (my stream + remote streams)
     const totalParticipants = 1 + (remoteStream?.length || 0)
 
     return (
-        <div className="min-h-screen bg-gray-950 text-white font-sans">
-            {/* User Left Popup */}
+        <div className="h-[100dvh] max-h-[100dvh] bg-slate-950 text-slate-100 font-sans flex flex-col justify-between overflow-hidden selection:bg-cyan-500/30 selection:text-cyan-200">
+            {/* User Left Popup Notification */}
             {showUserLeftPopup && (
-                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] animate-slide-down">
-                    <div className="bg-gradient-to-r from-gray-900/95 to-gray-800/95 border border-red-500/40 rounded-xl px-4 py-3 mx-4 backdrop-blur-lg shadow-2xl shadow-red-500/20 w-[280px] md:w-auto">
+                <div className="fixed top-4 left-1/2 transform -translate-x-1/2 z-[100] animate-bounce px-3 w-full max-w-sm">
+                    <div className="bg-slate-900/95 border border-rose-500/30 rounded-2xl px-4 py-3 backdrop-blur-xl shadow-2xl shadow-rose-950/40 flex items-center justify-between gap-3">
                         <div className="flex items-center gap-3">
-                            <div className="text-2xl">👋</div>
-                            <div>
-                                <h3 className="text-sm font-semibold text-red-400">
-                                    User Left
-                                </h3>
-                                <p className="text-gray-300 text-xs">
-                                    Participant has left the call
-                                </p>
+                            <div className="p-2 rounded-xl bg-rose-500/10 text-rose-400">
+                                <UserIcon className="w-4 h-4" />
                             </div>
-                            <button
-                                onClick={() => setShowUserLeftPopup(false)}
-                                className="ml-2 text-gray-400 hover:text-white transition-colors"
-                            >
-                                ✕
-                            </button>
+                            <div>
+                                <h3 className="text-xs sm:text-sm font-semibold text-white">Participant Left</h3>
+                                <p className="text-slate-400 text-[11px] sm:text-xs">The remote participant disconnected.</p>
+                            </div>
                         </div>
+                        <button
+                            onClick={() => setShowUserLeftPopup(false)}
+                            className="p-1 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+                        >
+                            <CloseIcon className="w-4 h-4" />
+                        </button>
                     </div>
                 </div>
             )}
 
-            {/* Header */}
-            <header className="px-6 py-4 border-b border-gray-700 bg-black/30 backdrop-blur-lg sticky top-0 z-50">
-                <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-3">
-                        <div className="text-2xl drop-shadow-lg">🔴</div>
-                        <h1 className="text-xl font-bold bg-gradient-to-r from-red-400 to-teal-400 bg-clip-text text-transparent">
-                            Live Video Call
-                        </h1>
+            {/* Top Bar */}
+            <header className="px-3 sm:px-6 py-2.5 sm:py-3.5 border-b border-slate-800/80 bg-slate-950/70 backdrop-blur-xl flex-shrink-0 z-40">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    {/* Brand & Room Info */}
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-7 h-7 sm:w-8 sm:h-8 rounded-lg bg-gradient-to-tr from-cyan-500 to-blue-600 flex items-center justify-center shadow-md shadow-cyan-500/20">
+                            <VideoIcon className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-white" />
+                        </div>
+                        <div className="flex items-center gap-1.5 sm:gap-2">
+                            <h1 className="text-xs sm:text-sm font-bold text-white tracking-tight">PulseCall</h1>
+                            <span className="text-slate-600">/</span>
+                            <span className="font-mono text-[11px] sm:text-xs text-slate-300 bg-slate-900 px-1.5 py-0.5 rounded-md border border-slate-800 max-w-[120px] sm:max-w-none truncate">
+                                {roomId}
+                            </span>
+                        </div>
                     </div>
 
-                    {/* Connection Status */}
-                    <div className="flex items-center gap-2">
-                        {isConnected === true ? (
-                            <>
-                                <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                                <span className="text-green-400 text-sm font-medium">Connected</span>
-                            </>
-                        ) : isConnected === false ? (
-                            <>
-                                <div className="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                                <span className="text-yellow-400 text-sm font-medium">Connecting...</span>
-                            </>
-                        ) : isConnected === undefined ? (
-                            <>
-                                <div className="w-2 h-2 bg-red-400 rounded-full animate-pulse"></div>
-                                <span className="text-red-400 text-sm font-medium">Failed</span>
-                            </>
-                        ) : (
-                            <>
-                                <div className="w-2 h-2 bg-gray-400 rounded-full"></div>
-                                <span className="text-gray-400 text-sm font-medium">Waiting</span>
-                            </>
-                        )}
+                    {/* Status Badges */}
+                    <div className="flex items-center gap-1.5 sm:gap-3">
+                        {/* Participants Pill */}
+                        <div className="flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] sm:text-xs font-medium text-slate-300">
+                            <UsersIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-cyan-400" />
+                            <span>{totalParticipants}</span>
+                        </div>
+
+                        {/* Connection Pill */}
+                        <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900 border border-slate-800 text-[11px] sm:text-xs font-medium">
+                            {isConnected === true ? (
+                                <>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                                    <span className="text-emerald-400 hidden xs:inline sm:inline">Connected</span>
+                                </>
+                            ) : isConnected === false ? (
+                                <>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-amber-400 animate-pulse"></span>
+                                    <span className="text-amber-400 hidden xs:inline sm:inline">Connecting</span>
+                                </>
+                            ) : isConnected === undefined ? (
+                                <>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-rose-400"></span>
+                                    <span className="text-rose-400 hidden xs:inline sm:inline">Failed</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-slate-500"></span>
+                                    <span className="text-slate-400 hidden xs:inline sm:inline">Standby</span>
+                                </>
+                            )}
+                        </div>
                     </div>
                 </div>
             </header>
 
-            {/* Video Container */}
-            <div className="flex-1 p-4 md:p-6 overflow-hidden">
-                <div className={`h-[calc(100vh-140px)] overflow-y-auto overflow-x-hidden grid gap-4 md:gap-6 auto-rows-min ${getGridLayout(totalParticipants)}`}>
-                    {/* My Video */}
-                    <div className="bg-gray-900/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-lg min-h-[200px] h-[250px] md:h-[300px]">
-                        <div className="h-full relative">
-                            {myStream ? (
+            {/* Video Streams Canvas */}
+            <main className="flex-1 min-h-0 p-2 sm:p-4 pb-20 sm:pb-24 max-w-7xl mx-auto w-full flex items-center justify-center">
+                <div className={`w-full h-full grid gap-2 sm:gap-4 min-h-0 ${getGridLayout(totalParticipants)}`}>
+                    
+                    {/* My Video Stream */}
+                    <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900/80 border border-slate-800/90 shadow-2xl shadow-cyan-950/10 flex items-center justify-center h-full min-h-0 w-full">
+                        {myStream ? (
+                            <div className="w-full h-full relative [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full [&_video]:!-scale-x-100 flex items-center justify-center">
                                 <ReactPlayer
                                     url={myStream}
                                     muted
@@ -486,27 +501,26 @@ function LiveRoom() {
                                     height="100%"
                                     style={{ objectFit: 'cover' }}
                                 />
-                            ) : (
-                                <div className="h-full flex items-center justify-center">
-                                    <div className="text-center">
-                                        <div className="text-4xl md:text-6xl mb-4 opacity-30">📹</div>
-                                        <p className="text-gray-400 text-sm">Loading camera...</p>
-                                    </div>
-                                </div>
-                            )}
-
-                            {/* Video Label */}
-                            <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-lg">
-                                <span className="text-white text-sm font-medium">You</span>
                             </div>
+                        ) : (
+                            <div className="flex flex-col items-center justify-center text-slate-500 p-4 text-center">
+                                <VideoIcon className="w-8 h-8 sm:w-10 sm:h-10 mb-2 sm:mb-3 animate-pulse text-slate-600" />
+                                <p className="text-xs sm:text-sm font-medium text-slate-400">Connecting camera & mic...</p>
+                            </div>
+                        )}
+
+                        {/* Stream Badge */}
+                        <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md">
+                            <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-400"></div>
+                            <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide">You</span>
                         </div>
                     </div>
 
-                    {/* Remote Video Streams */}
+                    {/* Remote Streams */}
                     {remoteStream && remoteStream.length > 0 ? (
                         remoteStream.map((stream, index) => (
-                            <div key={index} className="bg-gray-900/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-lg min-h-[200px] h-[250px] md:h-[300px]">
-                                <div className="h-full relative">
+                            <div key={index} className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900/80 border border-slate-800/90 shadow-2xl shadow-cyan-950/10 flex items-center justify-center h-full min-h-0 w-full">
+                                <div className="w-full h-full relative [&_video]:!object-cover [&_video]:!w-full [&_video]:!h-full flex items-center justify-center">
                                     <ReactPlayer
                                         url={stream}
                                         playing
@@ -518,109 +532,82 @@ function LiveRoom() {
                                         height="100%"
                                         style={{ objectFit: 'cover' }}
                                     />
+                                </div>
 
-                                    {/* Video Label */}
-                                    <div className="absolute bottom-4 left-4 bg-black/60 backdrop-blur-sm px-3 py-1 rounded-lg">
-                                        <span className="text-white text-sm font-medium">
-                                            Participant {index + 1}
-                                        </span>
-                                    </div>
+                                {/* Stream Badge */}
+                                <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 flex items-center gap-1.5 sm:gap-2 px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-xl bg-slate-950/70 border border-slate-800/80 backdrop-blur-md">
+                                    <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-cyan-400 animate-pulse"></div>
+                                    <span className="text-[11px] sm:text-xs font-semibold text-white tracking-wide">
+                                        Participant {index + 1}
+                                    </span>
                                 </div>
                             </div>
                         ))
                     ) : (
-                        // Placeholder when no remote streams
-                        remoteSocketId && (
-                            <div className="bg-gray-900/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-lg min-h-[200px] h-[250px] md:h-[300px]">
-                                <div className="h-full flex items-center justify-center">
-                                    <div className="text-center">
-                                        <div className="text-4xl md:text-6xl mb-4 opacity-30">👤</div>
-                                        <p className="text-gray-400 text-sm">Waiting for video...</p>
-                                    </div>
+                        /* Empty Remote Placeholder */
+                        <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden bg-slate-900/40 border border-dashed border-slate-800 flex items-center justify-center h-full min-h-0 p-4 sm:p-6 text-center">
+                            <div className="max-w-xs space-y-2 sm:space-y-3">
+                                <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-slate-800/50 border border-slate-700/50 flex items-center justify-center mx-auto text-slate-400">
+                                    <UserIcon className="w-5 h-5 sm:w-7 sm:h-7" />
                                 </div>
-                            </div>
-                        )
-                    )}
-
-                    {/* Waiting for participants placeholder */}
-                    {!remoteSocketId && (
-                        <div className="bg-gray-900/50 border border-gray-700 rounded-2xl overflow-hidden backdrop-blur-lg min-h-[200px] h-[250px] md:h-[300px]">
-                            <div className="h-full flex items-center justify-center">
-                                <div className="text-center">
-                                    <div className="text-4xl md:text-6xl mb-4 opacity-30">👤</div>
-                                    <p className="text-gray-400 text-sm">Waiting for participant...</p>
-                                </div>
+                                <h4 className="text-xs sm:text-sm font-semibold text-slate-300">
+                                    {remoteSocketId ? "Participant joined, preparing feed..." : "Waiting for another participant..."}
+                                </h4>
+                                <p className="text-[11px] sm:text-xs text-slate-500">
+                                    Share room ID <span className="font-mono text-cyan-400 font-semibold">{roomId}</span> with anyone to start video chatting.
+                                </p>
                             </div>
                         </div>
                     )}
+
                 </div>
-            </div>
+            </main>
 
-            {/* Control Panel */}
-            <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-gray-950 via-gray-950/95 to-transparent backdrop-blur-lg border-t border-gray-700">
-                <div className="px-4 py-2 md:px-6 md:py-3 flex justify-center items-center gap-4">
-                    {/* Status Message */}
-                    {isConnected === null && (
-                        <div className="text-center mb-2">
-                            <p className="text-gray-300 text-sm md:text-sm">
-                                {remoteSocketId
-                                    ? "✅ Participant joined! Ready to start call..."
-                                    : "⏳ Waiting for participant to join..."
-                                }
-                            </p>
-                        </div>
-                    )}
-
-                    {/* Control Buttons */}
-                    <div className="flex items-center justify-center gap-2 md:gap-3">
-                        {remoteStream && remoteStream.length > 0 && (
-                            <button
-                                onClick={() => setRemoteAudioEnabled(prev => !prev)}
-                                className="flex items-center gap-1 px-4 py-2 md:px-6 bg-white/10 border border-white/20 text-gray-200 font-semibold rounded-lg md:rounded-xl transition-all duration-300 hover:bg-white/20 text-sm md:text-base"
-                            >
-                                <span className="text-sm md:text-lg">🔊</span>
-                                <span className="hidden md:inline">{remoteAudioEnabled ? "Mute Remote" : "Enable Audio"}</span>
-                            </button>
-                        )}
-
-                        {/* End Call Button */}
-                        {remoteSocketId && (
-                            <button
-                                onClick={handleCallEnd}
-                                className="flex items-center gap-1 px-4 py-2 md:px-6 bg-gradient-to-r from-red-500 to-red-600 text-white font-semibold rounded-lg md:rounded-xl shadow-lg shadow-red-500/30 hover:shadow-red-500/40 transition-all duration-300 hover:scale-105 text-sm md:text-base"
-                            >
-                                <span className="text-sm md:text-lg">📞</span>
-                                <span className="hidden md:inline">End Call</span>
-                            </button>
-                        )}
-
-                        {/* Back Button */}
-                        {!remoteSocketId && (
-                            <button
-                                onClick={handleCallEnd}
-                                className="flex items-center gap-1 px-4 py-2 md:px-6 bg-white/10 border border-white/20 text-gray-300 font-semibold rounded-lg md:rounded-xl transition-all duration-300 hover:bg-white/20 text-sm md:text-base"
-                            >
-                                <span className="text-sm md:text-lg">←</span>
-                                <span className="hidden md:inline">Back to Home</span>
-                            </button>
-                        )}
+            {/* Floating Bottom Control Dock */}
+            <div className="fixed bottom-3 sm:bottom-6 left-0 right-0 z-50 flex flex-col items-center pointer-events-none px-3 sm:px-4">
+                
+                {/* Floating Status Notification */}
+                {isConnected === null && remoteSocketId && (
+                    <div className="mb-2 sm:mb-3 pointer-events-auto px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-cyan-950/80 border border-cyan-800/60 backdrop-blur-md text-[11px] sm:text-xs font-medium text-cyan-300 shadow-lg text-center max-w-[90vw] truncate">
+                        Participant detected. Establishing stream channels...
                     </div>
+                )}
 
-                    {/* Connection Status Text */}
-                    {isConnected === true && (
-                        <div className="text-center mt-1">
-                            <p className="text-green-400 text-sm font-medium">
-                                🎉 Call connected successfully!
-                            </p>
-                        </div>
+                {/* Main Action Dock */}
+                <div className="pointer-events-auto bg-slate-900/90 border border-slate-800/90 backdrop-blur-2xl px-4 py-2 sm:px-5 sm:py-2.5 rounded-full shadow-2xl shadow-black/80 flex items-center gap-2 sm:gap-3">
+                    
+                    {/* Audio Toggle Button */}
+                    {remoteStream && remoteStream.length > 0 && (
+                        <button
+                            onClick={() => setRemoteAudioEnabled(prev => !prev)}
+                            className={`p-2.5 sm:p-3 rounded-full transition-all duration-200 cursor-pointer ${
+                                remoteAudioEnabled 
+                                    ? "bg-slate-800 text-slate-200 hover:bg-slate-700 hover:text-white" 
+                                    : "bg-rose-500/20 border border-rose-500/30 text-rose-400 hover:bg-rose-500/30"
+                            }`}
+                            title={remoteAudioEnabled ? "Mute Remote Audio" : "Unmute Remote Audio"}
+                        >
+                            {remoteAudioEnabled ? <VolumeIcon className="w-4 h-4 sm:w-5 sm:h-5" /> : <VolumeXIcon className="w-4 h-4 sm:w-5 sm:h-5" />}
+                        </button>
                     )}
 
-                    {isConnected === false && (
-                        <div className="text-center mt-1">
-                            <p className="text-yellow-400 text-sm font-medium">
-                                🔄 Establishing connection... this may take a minute.
-                            </p>
-                        </div>
+                    {/* End Call Button */}
+                    {remoteSocketId ? (
+                        <button
+                            onClick={handleCallEnd}
+                            className="flex items-center gap-1.5 sm:gap-2 px-4 py-2 sm:px-5 sm:py-2.5 bg-rose-600 hover:bg-rose-500 text-white text-xs sm:text-sm font-semibold rounded-full shadow-lg shadow-rose-600/30 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer"
+                        >
+                            <PhoneOffIcon className="w-4 h-4" />
+                            <span>Leave Call</span>
+                        </button>
+                    ) : (
+                        <button
+                            onClick={handleCallEnd}
+                            className="flex items-center gap-1.5 sm:gap-2 px-3.5 py-2 sm:px-4 sm:py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs sm:text-sm font-medium rounded-full transition-all duration-200 cursor-pointer"
+                        >
+                            <ArrowLeftIcon className="w-4 h-4" />
+                            <span>Exit Lobby</span>
+                        </button>
                     )}
                 </div>
             </div>
