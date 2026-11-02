@@ -8,7 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 
 node_modules
-dist
+Client/dist
 dist-ssr
 *.local
 
@@ -25,8 +25,5 @@ dist-ssr
 .env
 *.env
 
-<<<<<<< HEAD
-=======
 todo.txt
->>>>>>> feat/sfu
 ssl
